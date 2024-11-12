@@ -7,7 +7,8 @@ class Node<T> {
 		data = null;
 		next = null;
 	}
-
+//j
+	
 	public Node(T val) {
 		data = val;
 		next = null;
