@@ -36,24 +36,5 @@ public class index {
 		
 	}
 	
-	
-	public static void main(String[] args) {
-		index i1=new index();
-		Linkedlist<String> w1=new Linkedlist<String>();
-		w1.insert("national");
-		w1.insert("flag");
-		w1.insert("green");
-		Documents d1=new Documents(1, w1);
-		i1.addDoc(d1);
-		
-		Linkedlist<String> w2=new Linkedlist<String>();
-		w2.insert("extends");
-		w2.insert("color");
-		w2.insert("pole");
-		Documents d2=new Documents(2, w2);
-		i1.addDoc(d2);
-		i1.displayDocs();
-
-	}
 
 }
