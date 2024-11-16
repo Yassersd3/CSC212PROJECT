@@ -1,96 +1,114 @@
+package CSC212_PROJECT;
+
 import java.io.File;
- import java.io.FileNotFoundException;
- import java.io.IOException;
- import java.util.Scanner;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Scanner;
 
 public class Driver {
-	
+
 	Linkedlist<String> stopWords;
 	index index1;
 	invertedIndex inverted;
-	
-	public Driver(){
-		stopWords = new Linkedlist<>();
+	InvertedIndexBST invertedBST;
+
+	public Driver() {
+		stopWords = new Linkedlist<String>();
 		index1 = new index();
 		inverted = new invertedIndex();
-		
+		invertedBST=new InvertedIndexBST();
+
 	}
-	
+
 	public void Load_stopWords(String fileName) {
-		
-		try{
-			File f=new File(fileName);
-			Scanner s=new Scanner(f);
-			
-			while(s.hasNextLine()) {
-				String line=s.nextLine();
+
+		try {
+			File f = new File(fileName);
+			Scanner s = new Scanner(f);
+
+			while (s.hasNextLine()) {
+				String line = s.nextLine();
 				stopWords.insert(line);
 			}
-			
-		}catch(IOException e) {
+
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	public void load_all_doc(String fileName) {
-		
+
 		String line = null;
 		try {
-			File f=new File(fileName);
-			Scanner s=new Scanner(f);
-			
+			File f = new File(fileName);
+			Scanner s = new Scanner(f);
+
 			s.nextLine();
-			while(s.hasNextLine()) {
-				line=s.nextLine();
+			while (s.hasNextLine()) {
+				line = s.nextLine();
+
 				
-				if(line.trim().length()<3) {
-					System.out.println("Empty line found, skipping this line="+line);
-					break;
-				}
-				
-				String x=line.substring(0,line.indexOf(','));
+				String x = line.substring(0, line.indexOf(','));
 				int id = Integer.parseInt(x.trim());
-				String content = line.substring(line.indexOf(',')+1).trim();
-				Linkedlist<String> words_in_doc = make_LinkedList_of_word_inndex_invertedIndex(content,id);
-				//index1.addDoc(null);
-			}	
-		}catch(Exception e) {
-			 System.out.println("end of file");
+				String content = line.substring(line.indexOf(',') + 1).trim();
+				Linkedlist<String> words_in_doc = make_LinkedList_of_word_inndex_invertedIndex(content, id);
+				index1.addDoc(new Documents(id, words_in_doc));
+			}
+		} catch (Exception e) {
+			System.out.println("end of file");
 		}
 	}
-	
-	public Linkedlist<String> make_LinkedList_of_word_inndex_invertedIndex(String content,int id){
+
+	public Linkedlist<String> make_LinkedList_of_word_inndex_invertedIndex(String content, int id) {
 		Linkedlist<String> words_in_doc = new Linkedlist<String>();
-		make_index_invertedIndex(content,words_in_doc,id);
+		make_index_invertedIndex(content, words_in_doc, id);
 		return words_in_doc;
 	}
-	
-	public void make_index_invertedIndex(String content,Linkedlist<String> words_in_doc, int id) {
-		
-	content=content.toLowerCase().replaceAll("[^a-zA-Z0-9 ]","");
-	String[] tokens = content.split("\\s+");
-	  for(String w : tokens) {
-	 	if(!existsIn_stopWords(w)) {
-			words_in_doc.insert(w);
-			inverted.add(w,id);
+
+	public void make_index_invertedIndex(String content, Linkedlist<String> words_in_doc, int id) {
+
+		content = content.toLowerCase().replaceAll("[^a-zA-Z0-9 ]", "");
+		String[] tokens = content.split("\\s+");
+		for (String w : tokens) {
+			if (!existsIn_stopWords(w)) {
+				words_in_doc.insert(w);
+				inverted.add(w, id);
+				invertedBST.add(w, id);
+			}
 		}
-	  }
 	}
-	
+
 	public boolean existsIn_stopWords(String word) {
-		if(stopWords==null||stopWords.empty())
+		if (stopWords == null || stopWords.empty())
 			return false;
 		stopWords.findfirst();
-		while(!stopWords.last()) {
-			if(stopWords.retrieve().equals(word))
+		while (!stopWords.last()) {
+			if (stopWords.retrieve().equals(word))
 				return true;
 			stopWords.findnext();
 		}
-		if(stopWords.retrieve().equals(word))
+		if (stopWords.retrieve().equals(word))
 			return true;
-				
+
 		return false;
 	}
-		 
+	public void displayDocByIds(Linkedlist<Integer> ids) {
+		if(ids.empty()) {
+			System.out.println("no documents exist");
+			return;
+		}
+		ids.findfirst();
+		while(!ids.last()) {
+			Documents d=index1.getDocById(ids.retrieve());
+			if(d!=null)
+				System.out.println("Document "+d.id+": "+d.words.retrieve());
+			ids.findnext();
+		}
+		Documents d=index1.getDocById(ids.retrieve());
+		if(d!=null)
+			System.out.println("Document "+d.id+": "+d.words.retrieve());
+	}
+	
+
 }
