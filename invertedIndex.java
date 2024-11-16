@@ -9,20 +9,6 @@ class content {
 		word = s;
 	}
 
-	public boolean isIdExist(int id) {
-		if (docIds.empty())
-			return false;
-		docIds.findfirst();
-		while (!docIds.last())
-			if (docIds.retrieve().equals(id))
-				return true;
-		docIds.findnext();
-		if (docIds.retrieve().equals(id))
-			return true;
-		return false;
-
-	}
-
 }
 
 public class invertedIndex {
@@ -73,12 +59,4 @@ public class invertedIndex {
 		invertedIndex.retrieve().docIds.display();
 	}
 
-	public static void main(String[] args) {
-		invertedIndex x=new invertedIndex();
-		x.add("dd", 1);
-		x.add("kk", 2);
-		x.add("dd", 2);
-		x.display();
-
-	}
 }
