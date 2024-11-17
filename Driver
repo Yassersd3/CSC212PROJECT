@@ -9,7 +9,7 @@ public class Driver {
 
 	Linkedlist<String> stopWords;
 	index index1;
-	invertedIndex inverted;
+	static invertedIndex inverted;
 	InvertedIndexBST invertedBST;
 
 	public Driver() {
@@ -101,14 +101,30 @@ public class Driver {
 		ids.findfirst();
 		while(!ids.last()) {
 			Documents d=index1.getDocById(ids.retrieve());
-			if(d!=null)
-				System.out.println("Document "+d.id+": "+d.words.retrieve());
+			if(d!=null) {
+				System.out.print("Document: "+d.id +" ");
+				d.words.display();
+				System.out.println();
+			}
+			
 			ids.findnext();
 		}
 		Documents d=index1.getDocById(ids.retrieve());
-		if(d!=null)
-			System.out.println("Document "+d.id+": "+d.words.retrieve());
+		if(d!=null) {
+			System.out.print("Document: "+d.id +" ");
+			d.words.display();
+			System.out.println();
+		}
 	}
 	
+	public static void main(String[] args) {
+		Driver d=new Driver();
 
+		d.Load_stopWords("stop.txt");
+		d.load_all_doc("dataset.csv");
+		Query q=new Query(inverted);
+		Linkedlist<Integer> r=new Linkedlist<Integer>();
+		r=q.BothQuerys("market OR sports AND warming");
+		d.displayDocByIds(r);
+	}
 }
