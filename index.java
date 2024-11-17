@@ -35,6 +35,18 @@ public class index {
 		d.words.display();
 		
 	}
+	public Documents getDocById(int id) {
+		alldocs.findfirst();
+		while(!alldocs.last()) {
+			if(alldocs.retrieve().id==id)
+				return alldocs.retrieve();
+			alldocs.findnext();
+		}
+		if(alldocs.retrieve().id==id)
+			return alldocs.retrieve();
+		return null;
+		
+	}
 	
 
 }
