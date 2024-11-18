@@ -13,30 +13,27 @@ public class Query {
 		if (a.empty() || b.empty())
 			return result;
 		a.findfirst();
-		b.findfirst();
-		while(!a.empty()&&!b.empty()) {
-			if(a.retrieve()==b.retrieve()) {
-				result.insert(a.retrieve());
-				if(!a.last())
-				a.findnext();
-				else
-					break;
-				if(!b.last())
-				b.findnext();
-				else
-					break;
-			}else if(a.retrieve()<b.retrieve())
-				if(!a.last())
-				a.findnext();
-				else break;
-			
-			else {
-				if(!b.last())
-				b.findnext();
-				else
-					break;
+		while (true) {
+			boolean found = isExsistInResult(result, a.retrieve());
+			if (!found) {
+				b.findfirst();
+				while (true) {
+					if (b.retrieve().equals(a.retrieve())) {
+						result.insert(a.retrieve());
+						break;
+					}
+					if (!b.last())
+						b.findnext();
+					else
+						break;
+
+				}
 			}
-			
+			if (!a.last())
+				a.findnext();
+			else
+				break;
+
 		}
 		return result;
 
@@ -81,43 +78,36 @@ public class Query {
 
 	public Linkedlist<Integer> OrQuery(Linkedlist<Integer> a, Linkedlist<Integer> b) {
 		Linkedlist<Integer> result = new Linkedlist<Integer>();
-
 		if (a.empty() || b.empty())
 			return result;
-
 		a.findfirst();
-		b.findfirst();
-
-		while (!a.empty() || !b.empty()) {
-			if (!a.empty() && (b.empty() || a.retrieve() < b.retrieve())) {
+		while (true) {
+			boolean found = isExsistInResult(result, a.retrieve());
+			if (!found) {
 				result.insert(a.retrieve());
-				if (!a.last())
-					a.findnext();
-				else
-					a = new Linkedlist<Integer>(); // Exhaust 'a'
-			} else if (!b.empty() && (a.empty() || b.retrieve() < a.retrieve())) {
 
-				result.insert(b.retrieve());
-				if (!b.last())
-					b.findnext();
-				else
-					b = new Linkedlist<Integer>();
-			} else {
-
-				result.insert(a.retrieve());
-				if (!a.last())
-					a.findnext();
-				else
-					a = new Linkedlist<Integer>();
-				if (!b.last())
-					b.findnext();
-				else
-					b = new Linkedlist<Integer>();
 			}
+			if (!a.last())
+				a.findnext();
+			else
+				break;
+
+		}
+		b.findfirst();
+		while (true) {
+			boolean found = isExsistInResult(result, b.retrieve());
+			if (!found) {
+				result.insert(b.retrieve());
+
+			}
+			if (!b.last())
+				b.findnext();
+			else
+				break;
+
 		}
 		return result;
 	}
-
 	public Linkedlist<Integer> OrQuery(String s) {
 		Linkedlist<Integer> a = new Linkedlist<Integer>();
 		Linkedlist<Integer> b = new Linkedlist<Integer>();
