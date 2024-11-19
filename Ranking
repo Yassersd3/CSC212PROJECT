@@ -1,0 +1,137 @@
+package CSC212_PROJECT;
+
+public class Ranking {
+	
+	    private Vocabulary word; // Encapsulate Vocabulary
+	    private int rank;        // Encapsulate rank
+
+	    public Ranking() {
+	        this.word = new Vocabulary("");
+	        this.rank = 0;
+	    }
+
+	    public Ranking(String word, int rank) {
+	        setVocabulary(new Vocabulary(word));
+	        setRank(rank);
+	    }
+
+	    // Method to increment rank and return the updated value
+	    public void incrementRank() {
+	        this.rank++;
+	    }
+	    
+
+	    public void setVocabulary(Vocabulary word) {
+	        if (word == null) {
+	            throw new IllegalArgumentException("Vocabulary cannot be null");
+	        }
+	        this.word = word;
+	    }
+
+	    public Vocabulary getVocabulary() {
+	        return this.word;
+	    }
+
+	    public void setRank(int rank) {
+	        if (rank < 0) {
+	            throw new IllegalArgumentException("Rank cannot be negative");
+	        }
+	        this.rank = rank;
+	    }
+
+	    public int getRank() {
+	        return this.rank;
+	    }
+
+	    public String toString() {
+	        return "Word: " + word.toString() + ", Rank: " + rank;
+	    }
+
+	    // Method to compare two Rank objects based on rank
+	    public boolean isHigherRank(Ranking other) {
+	        if (other == null) {
+	            throw new IllegalArgumentException("Other rank object cannot be null");
+	        }
+	        return this.rank > other.getRank();
+	    }
+
+	    // Main Method (Testing)
+	    public static void main(String[] args) {
+	        // Default Rank Object
+	        Ranking rank1 = new Ranking();
+	        System.out.println(rank1); // Output: Word: , Rank: 0
+
+	        // Rank Object with Initialization
+	        Ranking rank2 = new Ranking("Test", 5);
+	        System.out.println(rank2); // Output: Word: Test, Rank: 5
+
+	        // Incrementing Rank
+	        rank2.incrementRank();
+	        System.out.println(rank2); // Output: Word: Test, Rank: 6
+
+	        // Comparing Ranks
+	        System.out.println(rank2.isHigherRank(rank1)); // Output: true
+
+	        // Updating Vocabulary
+	        rank1.setVocabulary(new Vocabulary("Example"));
+	        rank1.setRank(2);
+	        System.out.println(rank1); // Output: Word: Example, Rank: 2
+	    }
+	}
+
+	// Example Vocabulary Class
+	class Vocabulary {
+	    private String word;
+
+	    public Vocabulary(String word) {
+	        this.word = word == null ? "" : word;
+	    }
+
+	    @Override
+	    public String toString() {
+	        return word;
+	    }
+	}
+	class Frequency {  
+	    Vocabulary word;  
+	    int Freq;  
+	  
+	    public Frequency() {  
+	        this.word = new Vocabulary("");  
+	        this.Freq = 0;  
+	    }  
+	      
+	    public Frequency(String word, int Freq) {  
+	        this.word = new Vocabulary(word);  
+	        this.Freq = Freq;  
+	    }  
+	      
+	        public void setVocabulary(Vocabulary word)  
+	    {  
+	        this. word = word;   
+	    }  
+	      
+	    public Vocabulary getVocabulary()  
+	    {  
+	         return word;  
+	    }  
+	  
+	    public int getFreq()  
+	    {  
+	        return Freq;  
+	    }  
+	      
+	    public int Icreament_Freq ()  
+	    {  
+	        ++this.Freq;  
+	        return this.Freq;  
+	    }  
+	  
+	    @Override  
+	    public String toString() {  
+	        return "Frequency{ " + word + ", " + Freq + '}';  
+	    }  
+	  
+	      
+	      
+	}  
