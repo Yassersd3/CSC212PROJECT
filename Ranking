@@ -1,137 +1,191 @@
 package CSC212_PROJECT;
 
+class Rank {
+	int id, rank;
+
+	public Rank(int id, int rank) {
+		this.id = id;
+		this.rank = rank;
+	}
+
+	public void displayInRank() {
+		System.out.println(id + "		 " + rank);
+	}
+}
+
 public class Ranking {
-	
-	    private Vocabulary word; // Encapsulate Vocabulary
-	    private int rank;        // Encapsulate rank
 
-	    public Ranking() {
-	        this.word = new Vocabulary("");
-	        this.rank = 0;
-	    }
+	String query;
+	InvertedIndexBST invertedBST;
+	index ind;
+	Linkedlist<Integer> QueryDocsIds;
+	Linkedlist<Rank> rankDocs;
 
-	    public Ranking(String word, int rank) {
-	        setVocabulary(new Vocabulary(word));
-	        setRank(rank);
-	    }
-
-	    // Method to increment rank and return the updated value
-	    public void incrementRank() {
-	        this.rank++;
-	    }
-	    
-
-	    public void setVocabulary(Vocabulary word) {
-	        if (word == null) {
-	            throw new IllegalArgumentException("Vocabulary cannot be null");
-	        }
-	        this.word = word;
-	    }
-
-	    public Vocabulary getVocabulary() {
-	        return this.word;
-	    }
-
-	    public void setRank(int rank) {
-	        if (rank < 0) {
-	            throw new IllegalArgumentException("Rank cannot be negative");
-	        }
-	        this.rank = rank;
-	    }
-
-	    public int getRank() {
-	        return this.rank;
-	    }
-
-	    public String toString() {
-	        return "Word: " + word.toString() + ", Rank: " + rank;
-	    }
-
-	    // Method to compare two Rank objects based on rank
-	    public boolean isHigherRank(Ranking other) {
-	        if (other == null) {
-	            throw new IllegalArgumentException("Other rank object cannot be null");
-	        }
-	        return this.rank > other.getRank();
-	    }
-
-	    // Main Method (Testing)
-	    public static void main(String[] args) {
-	        // Default Rank Object
-	        Ranking rank1 = new Ranking();
-	        System.out.println(rank1); // Output: Word: , Rank: 0
-
-	        // Rank Object with Initialization
-	        Ranking rank2 = new Ranking("Test", 5);
-	        System.out.println(rank2); // Output: Word: Test, Rank: 5
-
-	        // Incrementing Rank
-	        rank2.incrementRank();
-	        System.out.println(rank2); // Output: Word: Test, Rank: 6
-
-	        // Comparing Ranks
-	        System.out.println(rank2.isHigherRank(rank1)); // Output: true
-
-	        // Updating Vocabulary
-	        rank1.setVocabulary(new Vocabulary("Example"));
-	        rank1.setRank(2);
-	        System.out.println(rank1); // Output: Word: Example, Rank: 2
-	    }
+	public Ranking(InvertedIndexBST invertedBST) {
+		this.invertedBST = invertedBST;
 	}
 
-	// Example Vocabulary Class
-	class Vocabulary {
-	    private String word;
-
-	    public Vocabulary(String word) {
-	        this.word = word == null ? "" : word;
-	    }
-
-	    @Override
-	    public String toString() {
-	        return word;
-	    }
+	public Ranking(String query, InvertedIndexBST invertedBST, index ind) {
+		this.query = query;
+		this.invertedBST = invertedBST;
+		this.ind = ind;
+		QueryDocsIds = new Linkedlist<Integer>();
+		rankDocs = new Linkedlist<Rank>();
 	}
-	class Frequency {  
-	    Vocabulary word;  
-	    int Freq;  
-	  
-	    public Frequency() {  
-	        this.word = new Vocabulary("");  
-	        this.Freq = 0;  
-	    }  
-	      
-	    public Frequency(String word, int Freq) {  
-	        this.word = new Vocabulary(word);  
-	        this.Freq = Freq;  
-	    }  
-	      
-	        public void setVocabulary(Vocabulary word)  
-	    {  
-	        this. word = word;   
-	    }  
-	      
-	    public Vocabulary getVocabulary()  
-	    {  
-	         return word;  
-	    }  
-	  
-	    public int getFreq()  
-	    {  
-	        return Freq;  
-	    }  
-	      
-	    public int Icreament_Freq ()  
-	    {  
-	        ++this.Freq;  
-	        return this.Freq;  
-	    }  
-	  
-	    @Override  
-	    public String toString() {  
-	        return "Frequency{ " + word + ", " + Freq + '}';  
-	    }  
-	  
-	      
-	      
-	}  
+
+	public Documents getDocsById(int id) {
+		return ind.getDocById(id);
+	}
+
+	public int freqInDoc(Documents d, String s) {
+		int freq = 0;
+		Linkedlist<String> words = d.words;
+		words.findfirst();
+		while (!words.last()) {
+			if (words.retrieve().equalsIgnoreCase(s))
+				freq++;
+			words.findnext();
+		}
+		if (words.retrieve().equalsIgnoreCase(s))
+			freq++;
+		return freq;
+
+	}
+
+	public int allFreqInDoc(Documents d, String query) {
+		if (query.length() == 0)
+			return 0;
+		int allFreq = 0;
+		String[] x = query.split("\\s+");
+		for (int i = 0; i < x.length; i++) {
+			allFreq += freqInDoc(d, x[i].trim().toLowerCase());
+		}
+		return allFreq;
+	}
+
+	public void rankQuery(String s) {
+		if (s.length() == 0)
+			return;
+		Linkedlist<Integer> a = new Linkedlist<Integer>();
+		String[] x = s.split("\\s+");
+		boolean found = false;
+		for (int i = 0; i < x.length; i++) {
+			found = invertedBST.search(x[i].trim().toLowerCase());
+			if (found)
+				a = invertedBST.invertedIndexBST.retrieve().docIds;
+
+			sorting(a);
+		}
+
+	}
+
+	public void sorting(Linkedlist<Integer> a) {
+		if (a.empty()) {
+			System.out.println("Empty list");
+			return;
+		}
+		a.findfirst();
+		while (!a.last()) {
+			boolean found = isExsistInResult(QueryDocsIds, a.retrieve());
+			if (!found)
+				insert(a.retrieve());
+			a.findnext();
+		}
+		boolean found = isExsistInResult(QueryDocsIds, a.retrieve());
+		if (!found)
+			insert(a.retrieve());
+
+	}
+
+	public void insert(Integer i) {
+		if (QueryDocsIds.empty()) {
+			QueryDocsIds.insert(i);
+			return;
+		}
+		QueryDocsIds.findfirst();
+		while (!QueryDocsIds.last()) {
+			if (i < QueryDocsIds.retrieve()) {
+				Integer tmp = QueryDocsIds.retrieve();
+				QueryDocsIds.update(i);
+				QueryDocsIds.insert(tmp);
+				return;
+			} else
+				QueryDocsIds.findnext();
+		}
+		if (i < QueryDocsIds.retrieve()) {
+			Integer tmp = QueryDocsIds.retrieve();
+			QueryDocsIds.update(i);
+			QueryDocsIds.insert(tmp);
+			return;
+		} else
+			QueryDocsIds.insert(i);
+
+	}
+
+	public boolean isExsistInResult(Linkedlist<Integer> result, int x) {
+		if (result.empty())
+			return false;
+		result.findfirst();
+		while (!result.last()) {
+			if (result.retrieve().equals(x))
+				return true;
+			result.findnext();
+		}
+		if (result.retrieve().equals(x))
+			return true;
+		return false;
+	}
+
+	public void insertInRank(Rank r) {
+
+		if (rankDocs.empty()) {
+			rankDocs.insert(r);
+			return;
+		}
+		rankDocs.findfirst();
+		while (!rankDocs.last()) {
+			if (r.rank > rankDocs.retrieve().rank) {
+				Rank tmp = rankDocs.retrieve();
+				rankDocs.update(r);
+				rankDocs.insert(tmp);
+				return;
+			} else
+				rankDocs.findnext();
+		}
+		if (r.rank > rankDocs.retrieve().rank) {
+			Rank tmp = rankDocs.retrieve();
+			rankDocs.update(r);
+			rankDocs.insert(tmp);
+		} else
+			rankDocs.insert(r);
+
+	}
+
+	public void proccess() {
+		rankQuery(query);
+		if (QueryDocsIds.empty()) {
+			System.out.println("Empty list");
+			return;
+		}
+		QueryDocsIds.findfirst();
+		while (!QueryDocsIds.last()) {
+			Documents d = getDocsById(QueryDocsIds.retrieve());
+			int rank = allFreqInDoc(d, query);
+			insertInRank(new Rank(QueryDocsIds.retrieve(), rank));
+			QueryDocsIds.findnext();
+		}
+		Documents d = getDocsById(QueryDocsIds.retrieve());
+		int rank = allFreqInDoc(d, query);
+		insertInRank(new Rank(QueryDocsIds.retrieve(), rank));
+	}
+
+	public void display() {
+		System.out.println("DocID 	       score");
+		rankDocs.findfirst();
+		while (!rankDocs.last()) {
+			rankDocs.retrieve().displayInRank();
+			rankDocs.findnext();
+		}
+		rankDocs.retrieve().displayInRank();
+	}
+}
