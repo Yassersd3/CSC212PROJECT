@@ -1,132 +1,97 @@
 package CSC212_PROJECT;
 
-import java.util.*;
+import java.util.Scanner;
 
-public class main2 {
+public class TestMenu {
 
-    public static Scanner input = new Scanner(System.in);
-    public static SearchEngine searchEngine = new SearchEngine();
-
-    public static int displayMenu() {
-        System.out.println("========= Search Engine =========");
-        System.out.println("1. Boolean Retrieval");
-        System.out.println("2. Ranked Retrieval");
-        System.out.println("3. View Indexed Documents Count");
-        System.out.println("4. View Indexed Vocabulary");
-        System.out.println("5. Exit");
-        System.out.print("Enter your choice: ");
-        return input.nextInt();
-    }
-
-    // Handles Boolean Retrieval functionality
-    public static void BooleanRetrieval() {
-       // input.nextLine(); // Clear the newline character
-        System.out.print("Enter a Boolean query ");
-        String query = input.nextLine();
-        boolean[] results = searchEngine.performBooleanRetrieval(query);
-        System.out.println("Resulting Document IDs:");
-        printBooleanResults(results);
-    }
-
-    public static void printBooleanResults(boolean[] results) {
-        for (int i = 0; i < results.length; i++) {
-            if (results[i]) {
-                System.out.print("Doc" + (i + 1) + " ");
-            }
-        }
-        System.out.println();
-    }
-
-
-    public static void RankedRetrieval() {
-        input.nextLine(); // Clear the newline character
-        System.out.print("Enter a query for ranked retrieval: ");
-        String query = input.nextLine();
-        int[] docIDs = searchEngine.getRankedDocIDs(query);
-        double[] scores = searchEngine.getRankedScores(query);
-
-        System.out.println("Document IDs with Scores:");
-        for (int i = 0; i < docIDs.length; i++) {
-            System.out.println("Doc" + docIDs[i] + "\tScore: " + scores[i]);
-        }
-    }
-
-    // Displays the number of indexed documents
-    public static void displayIndexedDocuments() {
-        int docCount = searchEngine.getDocumentCount();
-        System.out.println("Number of indexed documents: " + docCount);
-    }
-
-    // Displays the vocabulary size
-    public static void displayIndexedVocabulary() {
-        String[] vocabulary = searchEngine.getVocabulary();
-        System.out.println("Vocabulary size: " + vocabulary.length);
-        System.out.println("Vocabulary terms: " + Arrays.toString(vocabulary));
-    }
+    static Driver driver;
+    static Query query;
+    static QueryBST queryBST;
+    static Ranking ranking;
 
     public static void main(String[] args) {
-        // Load data into the search engine
-        searchEngine.loadData("stopwords.txt", "dataset.csv");
+        // Initialize the driver and other components
+        driver = new Driver();
+        driver.Load_stopWords("stop.txt");
+        driver.load_all_doc("dataset.csv");
 
+        query = new Query(driver.inverted);
+        queryBST = new QueryBST(driver.invertedBST);
+        ranking = new Ranking(driver.invertedBST);
+
+        // Create a menu for user interaction
+        Scanner input = new Scanner(System.in);
         int choice;
         do {
-            choice = displayMenu();
+            choice = displayMenu(input);
             switch (choice) {
                 case 1:
-                    BooleanRetrieval();
+                    handleBooleanRetrieval(input);
                     break;
                 case 2:
-                    RankedRetrieval();
+                    handleRankedRetrieval(input);
                     break;
                 case 3:
                     displayIndexedDocuments();
                     break;
                 case 4:
-                    displayIndexedVocabulary();
+                    displayIndexedTokens();
                     break;
                 case 5:
-                    System.out.println("Exiting program...");
+                    System.out.println("Exiting the program...");
                     break;
                 default:
                     System.out.println("Invalid choice. Please try again.");
             }
         } while (choice != 5);
-    }
-}
 
-// Mocked SearchEngine class for demonstration
-class SearchEngine {
-    private int documentCount;
-    private String[] vocabulary;
-
-    // Load data into the search engine
-    public void loadData(String stopwordPath, String datasetPath) {
-        // Simulating loading documents and vocabulary
-        this.documentCount = 5;
-        this.vocabulary = new String[]{"market", "sports", "weather", "warming", "business", "world"};
-        System.out.println("Data loaded successfully.");
+        input.close();
     }
 
-    // Perform Boolean retrieval (mocked results for demo)
-    public boolean[] performBooleanRetrieval(String query) {
-        return new boolean[]{true, false, true, false, true}; // Mocked results
+    // Display the menu options
+    public static int displayMenu(Scanner input) {
+        System.out.println("\n========== Search Engine Test Menu ==========");
+        System.out.println("1. Boolean Retrieval");
+        System.out.println("2. Ranked Retrieval");
+        System.out.println("3. Display Indexed Documents");
+        System.out.println("4. Display Indexed Tokens");
+        System.out.println("5. Exit");
+        System.out.print("Enter your choice: ");
+        return input.nextInt();
     }
 
-    // Get ranked document IDs (mocked results for demo)
-    public int[] getRankedDocIDs(String query) {
-        return new int[]{1, 3, 5, 2}; // Mocked document IDs
+    // Handle Boolean Retrieval
+    public static void handleBooleanRetrieval(Scanner input) {
+        input.nextLine(); // Clear the buffer
+        System.out.print("Enter a Boolean query (e.g., 'market AND sports'): ");
+        String queryInput = input.nextLine();
+        Linkedlist<Integer> result = query.BothQuerys(queryInput);
+        System.out.println("Matching Document IDs:");
+        driver.displayDocByIds(result);
     }
 
-    // Get ranked scores (mocked results for demo)
-    public double[] getRankedScores(String query) {
-        return new double[]{0.95, 0.85, 0.75, 0.65}; // Mocked scores
+    // Handle Ranked Retrieval
+    public static void handleRankedRetrieval(Scanner input) {
+        input.nextLine(); // Clear the buffer
+        System.out.print("Enter a ranked query: ");
+        String queryInput = input.nextLine();
+        ranking.query = queryInput;
+        ranking.proccess();
+        System.out.println("Ranked Results:");
+        ranking.display();
     }
 
-    public int getDocumentCount() {
-        return this.documentCount;
+    // Display Indexed Documents
+    public static void displayIndexedDocuments() {
+        System.out.println("Indexed Documents:");
+        driver.index1.displayDocs();
     }
 
-    public String[] getVocabulary() {
-        return this.vocabulary;
+    // Display Indexed Tokens
+    public static void displayIndexedTokens() {
+        System.out.println("Indexed Vocabulary and Tokens:");
+        driver.inverted.display();
+        System.out.println("\nNumber of Tokens: " + driver.numberOfTokens);
+        System.out.println("Number of Vocabulary Terms: " + driver.numberOfVocabs);
     }
 }
