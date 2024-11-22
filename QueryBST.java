@@ -2,7 +2,6 @@ package CSC212_PROJECT;
 
 public class QueryBST {
 
-	invertedIndex inverted;
 	InvertedIndexBST invertedBST;
 
 	public QueryBST(InvertedIndexBST i) {
@@ -141,6 +140,24 @@ public class QueryBST {
 		}
 		return a;
 
+	}
+	public Linkedlist<Integer> NotQuery(String s,index i){
+		Linkedlist<Integer> a = new Linkedlist<Integer>();
+		Linkedlist<Integer> result = new Linkedlist<Integer>();
+		String not=s.replaceFirst("NOT", "").trim().toLowerCase();
+		boolean found=invertedBST.search(not);
+		if(found)
+			a=invertedBST.invertedIndexBST.retrieve().docIds;
+		i.alldocs.findfirst();
+		while(!i.alldocs.last()) {
+			if(!a.search(i.alldocs.retrieve().id))
+				result.insert(i.alldocs.retrieve().id);
+			i.alldocs.findnext();
+		}
+		if(!a.search(i.alldocs.retrieve().id))
+			result.insert(i.alldocs.retrieve().id);
+		return result;
+		
 	}
 
 }
