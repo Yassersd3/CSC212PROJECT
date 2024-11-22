@@ -91,9 +91,7 @@ public class BST<T> {
 			return;
 		inOrder(p.left);
 		System.out.println("Key: " + p.key);
-		System.out.print("[");
 		((content) p.data).docIds.display();
-		System.out.println("]");
 		System.out.println("----------------------------------------------");
 		inOrder(p.right);
 	}
