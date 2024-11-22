@@ -8,6 +8,9 @@ class content {
 		docIds = new Linkedlist<Integer>();
 		word = s;
 	}
+	public void display() {
+		
+	}
 
 }
 
@@ -28,7 +31,7 @@ public class invertedIndex {
 				return true;
 			invertedIndex.findnext();
 		}
-		
+
 		if (invertedIndex.retrieve().word.equals(s))
 			return true;
 		return false;
@@ -50,13 +53,15 @@ public class invertedIndex {
 		invertedIndex.findfirst();
 		while (!invertedIndex.last()) {
 			System.out.println("-----------------------------------------------");
-			System.out.print("word: "+invertedIndex.retrieve().word+"	");
+			System.out.print("word: " + invertedIndex.retrieve().word+" ");
 			invertedIndex.retrieve().docIds.display();
 			invertedIndex.findnext();
 		}
 		System.out.println("-----------------------------------------------");
-		System.out.print("word: "+invertedIndex.retrieve().word+"	");
+		System.out.print("word: " + invertedIndex.retrieve().word +" ");
 		invertedIndex.retrieve().docIds.display();
 	}
+	
 
+	
 }
