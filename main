@@ -1,0 +1,132 @@
+package CSC212_PROJECT;
+
+import java.util.*;
+
+public class main2 {
+
+    public static Scanner input = new Scanner(System.in);
+    public static SearchEngine searchEngine = new SearchEngine();
+
+    public static int displayMenu() {
+        System.out.println("========= Search Engine =========");
+        System.out.println("1. Boolean Retrieval");
+        System.out.println("2. Ranked Retrieval");
+        System.out.println("3. View Indexed Documents Count");
+        System.out.println("4. View Indexed Vocabulary");
+        System.out.println("5. Exit");
+        System.out.print("Enter your choice: ");
+        return input.nextInt();
+    }
+
+    // Handles Boolean Retrieval functionality
+    public static void BooleanRetrieval() {
+       // input.nextLine(); // Clear the newline character
+        System.out.print("Enter a Boolean query ");
+        String query = input.nextLine();
+        boolean[] results = searchEngine.performBooleanRetrieval(query);
+        System.out.println("Resulting Document IDs:");
+        printBooleanResults(results);
+    }
+
+    public static void printBooleanResults(boolean[] results) {
+        for (int i = 0; i < results.length; i++) {
+            if (results[i]) {
+                System.out.print("Doc" + (i + 1) + " ");
+            }
+        }
+        System.out.println();
+    }
+
+
+    public static void RankedRetrieval() {
+        input.nextLine(); // Clear the newline character
+        System.out.print("Enter a query for ranked retrieval: ");
+        String query = input.nextLine();
+        int[] docIDs = searchEngine.getRankedDocIDs(query);
+        double[] scores = searchEngine.getRankedScores(query);
+
+        System.out.println("Document IDs with Scores:");
+        for (int i = 0; i < docIDs.length; i++) {
+            System.out.println("Doc" + docIDs[i] + "\tScore: " + scores[i]);
+        }
+    }
+
+    // Displays the number of indexed documents
+    public static void displayIndexedDocuments() {
+        int docCount = searchEngine.getDocumentCount();
+        System.out.println("Number of indexed documents: " + docCount);
+    }
+
+    // Displays the vocabulary size
+    public static void displayIndexedVocabulary() {
+        String[] vocabulary = searchEngine.getVocabulary();
+        System.out.println("Vocabulary size: " + vocabulary.length);
+        System.out.println("Vocabulary terms: " + Arrays.toString(vocabulary));
+    }
+
+    public static void main(String[] args) {
+        // Load data into the search engine
+        searchEngine.loadData("stopwords.txt", "dataset.csv");
+
+        int choice;
+        do {
+            choice = displayMenu();
+            switch (choice) {
+                case 1:
+                    BooleanRetrieval();
+                    break;
+                case 2:
+                    RankedRetrieval();
+                    break;
+                case 3:
+                    displayIndexedDocuments();
+                    break;
+                case 4:
+                    displayIndexedVocabulary();
+                    break;
+                case 5:
+                    System.out.println("Exiting program...");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        } while (choice != 5);
+    }
+}
+
+// Mocked SearchEngine class for demonstration
+class SearchEngine {
+    private int documentCount;
+    private String[] vocabulary;
+
+    // Load data into the search engine
+    public void loadData(String stopwordPath, String datasetPath) {
+        // Simulating loading documents and vocabulary
+        this.documentCount = 5;
+        this.vocabulary = new String[]{"market", "sports", "weather", "warming", "business", "world"};
+        System.out.println("Data loaded successfully.");
+    }
+
+    // Perform Boolean retrieval (mocked results for demo)
+    public boolean[] performBooleanRetrieval(String query) {
+        return new boolean[]{true, false, true, false, true}; // Mocked results
+    }
+
+    // Get ranked document IDs (mocked results for demo)
+    public int[] getRankedDocIDs(String query) {
+        return new int[]{1, 3, 5, 2}; // Mocked document IDs
+    }
+
+    // Get ranked scores (mocked results for demo)
+    public double[] getRankedScores(String query) {
+        return new double[]{0.95, 0.85, 0.75, 0.65}; // Mocked scores
+    }
+
+    public int getDocumentCount() {
+        return this.documentCount;
+    }
+
+    public String[] getVocabulary() {
+        return this.vocabulary;
+    }
+}
