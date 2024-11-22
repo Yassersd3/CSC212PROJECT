@@ -1,11 +1,9 @@
-package CSC212_PROJECT;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
-
-public class Driver {
+ 
+public class files {
 
 	Linkedlist<String> stopWords;
 	index index1;
@@ -14,7 +12,7 @@ public class Driver {
 	int numberOfTokens, numberOfVocabs;
 	Linkedlist<String> uniqueWords = new Linkedlist<String>();
 
-	public Driver() {
+	public files() {
 		stopWords = new Linkedlist<String>();
 		index1 = new index();
 		inverted = new invertedIndex();
@@ -22,7 +20,7 @@ public class Driver {
 
 	}
 
-	public void Load_stopWords(String fileName) {
+	public void saveStopWords(String fileName) {
 
 		try {
 			File f = new File(fileName);
@@ -39,7 +37,7 @@ public class Driver {
 
 	}
 
-	public void load_all_doc(String fileName) {
+	public void saveDocuments(String fileName) {
 
 		String line = null;
 		try {
@@ -53,7 +51,7 @@ public class Driver {
 				String x = line.substring(0, line.indexOf(','));
 				int id = Integer.parseInt(x.trim());
 				String content = line.substring(line.indexOf(',') + 1).trim();
-				Linkedlist<String> words_in_doc = make_LinkedList_of_word_inndex_invertedIndex(content, id);
+				Linkedlist<String> words_in_doc = createWordList(content, id);
 				get_Tokens_words_Number(content);
 				index1.addDoc(new Documents(id, words_in_doc));
 			}
@@ -61,13 +59,13 @@ public class Driver {
 		}
 	}
 
-	public Linkedlist<String> make_LinkedList_of_word_inndex_invertedIndex(String content, int id) {
+	public Linkedlist<String> createWordList(String content, int id) {
 		Linkedlist<String> words_in_doc = new Linkedlist<String>();
-		make_index_invertedIndex(content, words_in_doc, id);
+		buildInvertedIndex(content, words_in_doc, id);
 		return words_in_doc;
 	}
 
-	public void make_index_invertedIndex(String content, Linkedlist<String> words_in_doc, int id) {
+	public void buildInvertedIndex(String content, Linkedlist<String> words_in_doc, int id) {
 
 		content = content.replaceAll("-", "");
 		content = content.toLowerCase().replaceAll("[^a-zA-Z0-9 ]", "");
@@ -75,7 +73,7 @@ public class Driver {
 
 		for (String w : tokens) {
 
-			if (!existsIn_stopWords(w)) {
+			if (!isStopWord(w)) {
 				words_in_doc.insert(w);
 				inverted.add(w, id);
 				invertedBST.add(w, id);
@@ -84,7 +82,7 @@ public class Driver {
 		}
 	}
 
-	public boolean existsIn_stopWords(String word) {
+	public boolean isStopWord(String word) {
 		if (stopWords == null || stopWords.empty())
 			return false;
 		stopWords.findfirst();
@@ -137,6 +135,10 @@ public class Driver {
 			}
 		}
 	}
+
+	
+}
+ 
 
 	
 }
