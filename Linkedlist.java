@@ -7,8 +7,7 @@ class Node<T> {
 		data = null;
 		next = null;
 	}
-//j
-	
+
 	public Node(T val) {
 		data = val;
 		next = null;
@@ -90,5 +89,14 @@ public class Linkedlist<T> {
 			tmp = tmp.next;
 		}
 		System.out.println(tmp.data);
+	}
+	public boolean search(T x) {
+		Node p=head;
+		while(p!=null) {
+			if(p.data.equals(x))
+				return true;
+			p=p.next;
+		}
+		return false;
 	}
 }
