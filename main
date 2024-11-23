@@ -4,94 +4,112 @@ import java.util.Scanner;
 
 public class TestMenu {
 
-    static Driver driver;
-    static Query query;
-    static QueryBST queryBST;
-    static Ranking ranking;
+	static files file;
+	static QueryBST query;
+	static Ranking ranking;
 
-    public static void main(String[] args) {
-        // Initialize the driver and other components
-        driver = new Driver();
-        driver.Load_stopWords("stop.txt");
-        driver.load_all_doc("dataset.csv");
+	public static void main(String[] args) {
+		file = new files();
+		file.saveStopWords("stop.txt");
+		file.saveDocuments("dataset.csv");
 
-        query = new Query(driver.inverted);
-        queryBST = new QueryBST(driver.invertedBST);
-        ranking = new Ranking(driver.invertedBST);
+		query = new QueryBST(file.invertedBST);
+		ranking = new Ranking(file.invertedBST);
 
-        // Create a menu for user interaction
-        Scanner input = new Scanner(System.in);
-        int choice;
-        do {
-            choice = displayMenu(input);
-            switch (choice) {
-                case 1:
-                    handleBooleanRetrieval(input);
-                    break;
-                case 2:
-                    handleRankedRetrieval(input);
-                    break;
-                case 3:
-                    displayIndexedDocuments();
-                    break;
-                case 4:
-                    displayIndexedTokens();
-                    break;
-                case 5:
-                    System.out.println("Exiting the program...");
-                    break;
-                default:
-                    System.out.println("Invalid choice. Please try again.");
-            }
-        } while (choice != 5);
+		Scanner input = new Scanner(System.in);
+		int choice;
+		do {
+			choice = displayMenu(input);
+			switch (choice) {
+			case 1:
+				BooleanRetrieval(input);
+				break;
+			case 2:
+				RankedRetrieval(input);
+				break;
+			case 3:
+				displayIndexedDocuments();
+				break;
+			case 4:
+				displayIndexedTokens();
+				break;
+			case 5:
+				numberOfDocs();
+				break;
+			case 6:
+				searching(input);
+				break;
+			case 7:
+				System.out.println("Exiting the program...");
+				break;
+			default:
+				System.out.println("Invalid choice. Please try again.");
+			}
+		} while (choice != 7);
 
-        input.close();
-    }
+		input.close();
+	}
 
-    // Display the menu options
-    public static int displayMenu(Scanner input) {
-        System.out.println("\n========== Search Engine Test Menu ==========");
-        System.out.println("1. Boolean Retrieval");
-        System.out.println("2. Ranked Retrieval");
-        System.out.println("3. Display Indexed Documents");
-        System.out.println("4. Display Indexed Tokens");
-        System.out.println("5. Exit");
-        System.out.print("Enter your choice: ");
-        return input.nextInt();
-    }
+	public static int displayMenu(Scanner input) {
+		System.out.println("\n========== Search Engine Menu ==========");
+		System.out.println("1. Boolean Retrieval");
+		System.out.println("2. Ranked Retrieval");
+		System.out.println("3. Display Indexed Documents");
+		System.out.println("4. Display Indexed Tokens and vocabulary");
+		System.out.println("5. Display number od documents in the index");
+System.out.println("6. search for a word");
+		System.out.println("7. Exit");
+		System.out.print("Enter your choice: ");
+		return input.nextInt();
+	}
 
-    // Handle Boolean Retrieval
-    public static void handleBooleanRetrieval(Scanner input) {
-        input.nextLine(); // Clear the buffer
-        System.out.print("Enter a Boolean query (e.g., 'market AND sports'): ");
-        String queryInput = input.nextLine();
-        Linkedlist<Integer> result = query.BothQuerys(queryInput);
-        System.out.println("Matching Document IDs:");
-        driver.displayDocByIds(result);
-    }
+	public static void numberOfDocs() {
+		System.out.println("Number of documents in the index is: " + file.numberOfDocs);
+	}
 
-    // Handle Ranked Retrieval
-    public static void handleRankedRetrieval(Scanner input) {
-        input.nextLine(); // Clear the buffer
-        System.out.print("Enter a ranked query: ");
-        String queryInput = input.nextLine();
-        ranking.query = queryInput;
-        ranking.proccess();
-        System.out.println("Ranked Results:");
-        ranking.display();
-    }
+	public static void searching(Scanner input) {
+		System.out.println("Enter a word to search: ");
+		String word = input.next();
+		if (file.invertedBST.search(word)) {
+			System.out.println("The word " + word + " is exist in the following documents: ");
+			file.index1.displayDocsByWord(word);
+		}
+		else
+			System.out.println("The word " + word + " dosen't exist");
 
-    // Display Indexed Documents
-    public static void displayIndexedDocuments() {
-        System.out.println("Indexed Documents:");
-        driver.index1.displayDocs();
-    }
+	}
 
-    // Display Indexed Tokens
-    public static void displayIndexedTokens() {
-        System.out.println("Indexed Vocabulary and Tokens:");
-        driver.inverted.display();
-        System.out.println("\nNumber of Tokens: " + driver.numberOfTokens);
-        System.out.println("Number of Vocabulary Terms: " + driver.numberOfVocabs);
-    }
+	public static void BooleanRetrieval(Scanner input) {
+		input.nextLine();
+		Linkedlist<Integer> result;
+		System.out.print("Enter a Boolean query AND-OR-NOT: ");
+		String queryInput = input.nextLine();
+		if (queryInput.contains("NOT")) 
+			result = query.NotQuery(queryInput, file.index1);
+		else
+			result = query.BothQuerys(queryInput);
+System.out.println("Matching Document:\n");
+		file.displayDocByIds(result);
+	}
+
+	public static void RankedRetrieval(Scanner input) {
+		input.nextLine();
+		System.out.print("Enter a ranked query: ");
+		String queryInput = input.nextLine();
+		ranking = new Ranking(queryInput, file.invertedBST, file.index1);
+		ranking.proccess();
+		System.out.println("Ranked Results:");
+		ranking.display();
+	}
+
+	public static void displayIndexedDocuments() {
+		System.out.println("Indexed Documents:");
+		file.index1.displayDocs();
+	}
+
+	public static void displayIndexedTokens() {
+		System.out.println("Indexed Vocabulary and Tokens:");
+		System.out.println("\nNumber of Tokens: " + file.numberOfTokens);
+		System.out.println("Number of Vocabulary Terms: " + file.numberOfVocabs);
+	}
 }
