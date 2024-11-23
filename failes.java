@@ -1,3 +1,4 @@
+package CSC212_PROJECT;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -9,7 +10,7 @@ public class files {
 	index index1;
 	invertedIndex inverted;
 	InvertedIndexBST invertedBST;
-	int numberOfTokens, numberOfVocabs;
+	int numberOfTokens, numberOfVocabs,numberOfDocs;
 	Linkedlist<String> uniqueWords = new Linkedlist<String>();
 
 	public files() {
@@ -54,6 +55,7 @@ public class files {
 				Linkedlist<String> words_in_doc = createWordList(content, id);
 				get_Tokens_words_Number(content);
 				index1.addDoc(new Documents(id, words_in_doc));
+				numberOfDocs++;
 			}
 		} catch (Exception e) {
 		}
@@ -134,6 +136,7 @@ public class files {
 				numberOfVocabs++;
 			}
 		}
+		
 	}
 
 	
@@ -141,4 +144,3 @@ public class files {
  
 
 	
-}
