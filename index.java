@@ -53,9 +53,24 @@ public class index {
 		return null;
 		
 	}
-
-	
-
-	
+	public void displayDocsByWord(String s) {
+	    alldocs.findfirst();
+	    while (!alldocs.last()) {
+	        Documents doc = alldocs.retrieve();  
+	        Linkedlist<String> words = doc.words;  
+	        
+	        
+	        words.findfirst();
+	        while (!words.last()) {
+	            if (words.retrieve().equals(s)) {
+	                System.out.print("Document: " + doc.id+"	");
+	                words.display();
+	                break;  
+	            }
+	            words.findnext();
+	        }
+	        alldocs.findnext();
+	    }
+	}
 
 }
